@@ -270,3 +270,46 @@ select * from addresses join houses h on addresses.id = h.address_id where addre
 select *, o.first_name,c.first_name,a.name  from houses as h left join owners o on h.owner_id = o.id join customers c on c.id = owner_id
                                                              join agencies a on c.id = a.id;
 select * from customers where date_of_birth > '1999-1-1'  limit 15 offset 10;
+select rating,house_type,o.first_name from houses h join owners o on h.owner_id = o.id
+group by rating, house_type, o.first_name order by rating,house_type,o.first_name asc;
+select rating,house_type,o.first_name from houses h join owners o on h.owner_id = o.id
+group by rating, house_type, o.first_name order by rating,house_type,o.first_name desc ;
+select count(*) as count,sum(price) as sum_price from houses where house_type = 'Apartment';
+select a.name, a2.region from agencies a join addresses a2 on a.address_id = a2.id
+                                         join houses h on h.address_id = a2.id where a.name = 'My House' group by a.name, a2.region;
+select furniture,o.first_name as owner_name, city, region, street, city, region, street
+from houses h join owners o on h.owner_id = o.id right join addresses a on a.id = h.address_id
+where furniture = true;
+select  house_type, price, rating, description, room, furniture,city, region, street, agencies.name from houses
+                                                                                                             left join customers on houses.address_id = customers.id
+                                                                                                             left join addresses on houses.address_id = addresses.id
+                                                                                                             left join agencies on houses.id = agencies.id where customers.id is null;
+select  nationality, count(*) as count from customers group by nationality;
+select max(rating) as big_rating,min(rating) as small_rating,avg(rating) as avg_rating from houses;
+select * from houses h left join rent_info ri on h.id = ri.customer_id left join customers  c on c.id = ri.house_id
+where ri.house_id is null ;
+select  avg(price) as avg_price from houses group by price;
+select  c.first_name,o.first_name from houses h left join owners o on h.owner_id = o.id join rent_info ri on h.id = ri.owner_id
+                                                join customers c on ri.customer_id = c.id where c.first_name like 'A%';
+select o.first_name, count(*) as count from owners o join houses h on o.id = h.owner_id group by o.first_name
+order by count desc limit 1;
+select * from customers where nationality = 'Kyrgyz';
+select h.room, count() as rooms from houses h join addresses a on h.address_id = a.id ---- not
+
+
+
+select * from houses h join addresses a on h.address_id = a.id
+                       join customers c on c.id = h.address_id where city = 'Bishkek';
+select gender from customers group by gender;
+
+select * from houses h join rent_info ri on h.id = ri.house_id --not
+
+select o.first_name, o.last_name,o.gender,o.date_of_birth,o.email,max(price) from houses h
+                                                                                      right join owners o on h.owner_id = o.id group by price, o.first_name, o.last_name, o.gender, o.date_of_birth, o.email
+order by price desc limit 1;
+select * from agencies a  join addresses a2 on a.address_id = a2.id;
+select houses.description, max(rating) from houses group by description, rating order by rating desc limit 5;
+select owners.first_name,h.house_type,h.description,h.rating,h.price,h.furniture,a.city,a.region,a.street,
+       avg(date_part('year',age(current_date,date_of_birth))) as avg_age  from owners right join houses h on owners.id = h.owner_id
+                                                                           right join addresses a on a.id = h.address_id group by owners.first_name, h.house_type, h.description, h.rating, h.price, h.furniture,a.city,a.region,a.street,
+                                                                                                                                             date_part('year',age(current_date,date_of_birth)) order by avg_age limit 1;
